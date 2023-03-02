@@ -1,0 +1,54 @@
+<form class="example-form">
+  <!-- TODO: add filter in here -->
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Number</mat-label>
+    <input
+      type="text"
+      placeholder="Pick one"
+      aria-label="Number"
+      matInput
+      [formControl]="myControl"
+    />
+    <!-- <mat-autocomplete #auto="matAutocomplete">
+      <mat-option
+        *ngFor="let option of filteredOptions | async"
+        [value]="option"
+      >
+        {{ option }}
+      </mat-option>
+    </mat-autocomplete> -->
+  </mat-form-field>
+
+  <!-- TODO: add filter in here -->
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Number</mat-label>
+    <input
+      type="text"
+      placeholder="Pick one"
+      aria-label="Number"
+      matInput
+      [formControl]="myControl"
+    />
+    <!-- <mat-autocomplete #auto="matAutocomplete">
+      <mat-option
+        *ngFor="let option of filteredOptions | async"
+        [value]="option"
+      >
+        {{ option }}
+      </mat-option>
+    </mat-autocomplete> -->
+  </mat-form-field>
+</form>
+
+<div class="flex flex-wrap">
+  <div
+    class="w-1/5 p-4"
+    *ngFor="
+      let breed of breedsList$ | async as list;
+      index as idx;
+      trackBy: trackByFunc
+    "
+  >
+    <img class="object-cover aspect-square h-36" [src]="breed" [alt]="idx" />
+  </div>
+</div>
