@@ -1,54 +1,72 @@
-<form class="example-form">
-  <!-- TODO: add filter in here -->
-  <mat-form-field class="example-full-width" appearance="fill">
-    <mat-label>Number</mat-label>
-    <input
-      type="text"
-      placeholder="Pick one"
-      aria-label="Number"
-      matInput
-      [formControl]="myControl"
-    />
-    <!-- <mat-autocomplete #auto="matAutocomplete">
-      <mat-option
-        *ngFor="let option of filteredOptions | async"
-        [value]="option"
-      >
-        {{ option }}
-      </mat-option>
-    </mat-autocomplete> -->
-  </mat-form-field>
+<form
+  class="flex relative flex-col p-4 md:px-60"
+  [formGroup]="formGroup"
+  (ngSubmit)="onSubmit()"
+>
+  <!-- ?? TITLE  -->
 
-  <!-- TODO: add filter in here -->
-  <mat-form-field class="example-full-width" appearance="fill">
-    <mat-label>Number</mat-label>
-    <input
-      type="text"
-      placeholder="Pick one"
-      aria-label="Number"
-      matInput
-      [formControl]="myControl"
-    />
-    <!-- <mat-autocomplete #auto="matAutocomplete">
-      <mat-option
-        *ngFor="let option of filteredOptions | async"
-        [value]="option"
-      >
-        {{ option }}
-      </mat-option>
-    </mat-autocomplete> -->
-  </mat-form-field>
-</form>
-
-<div class="flex flex-wrap">
-  <div
-    class="w-1/5 p-4"
-    *ngFor="
-      let breed of breedsList$ | async as list;
-      index as idx;
-      trackBy: trackByFunc
-    "
-  >
-    <img class="object-cover aspect-square h-36" [src]="breed" [alt]="idx" />
+  <div class="my-4 md:my-8 text-2xl font-bold">
+    Your puppy is waiting for your warm
   </div>
-</div>
+
+  <!-- ?? FILTERS  -->
+
+  <div class="grid sticky z-10 top-1 gap-4 grid-cols-2 md:grid-cols-tag">
+    <autocomplete
+      class="md:w-36"
+      placeholder="Fill the breed"
+      formControlName="breed"
+      [options]="breedsList$"
+      label="Breed"
+    ></autocomplete>
+    <autocomplete
+      class="md:w-36"
+      *ngIf="(subBreedsList$ | async)?.length"
+      placeholder="Fill the sub breed"
+      formControlName="subBreed"
+      [options]="subBreedsList$"
+      label="Sub Breed"
+    ></autocomplete>
+  </div>
+
+  <!-- ?? GALLERY  -->
+
+  <div
+    class="grid gap-4 grid-cols-breeds-list md:grid-cols-md-breeds-list overflow-auto"
+  >
+    <ng-container
+      *ngFor="
+        let url of breedImagesList$ | async as list;
+        index as idx;
+        trackBy: trackByFunc
+      "
+    >
+      <div
+        (click)="formGroup.get('breed')?.patchValue(getBreed(url))"
+        class="relative"
+      >
+        <img class="aspect-video object-cover w-full" [src]="url" [alt]="idx" />
+        <div class="absolute flex gap-2 bottom-2 right-2">
+          <div class="rounded backdrop-blur font-bold bg-gray-100 px-4 py-1">
+            {{ getBreed(url) }}
+          </div>
+          <div
+            *ngIf="getSubBreed(url)"
+            class="rounded backdrop-blur bg-gray-100 px-4 py-1"
+          >
+            {{ getSubBreed(url) }}
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- ??   -->
+
+  <button
+    class="bg-blue-600 fixed text-white w-max px-4 py-1 rounded-sm bottom-2 left-1/2 translate-x-[-50%]"
+    type="submit"
+  >
+    Get some more puppies
+  </button>
+</form>

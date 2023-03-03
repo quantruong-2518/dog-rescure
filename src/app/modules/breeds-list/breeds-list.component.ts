@@ -1,8 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { DogAPIResponse } from '../shared/models/Breed.model';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { Observable, of, Subscription } from 'rxjs';
+import { Breed, DogAPIResponse } from '../shared/models/Breed.model';
 import { BreedService } from './breed.service';
+import { getBreedByUrl, getSubBreedByUrl } from './breeds-list.helper';
 
 @Component({
   selector: 'app-breeds-list',
@@ -12,24 +18,78 @@ import { BreedService } from './breed.service';
 export class BreedsListComponent implements OnInit, OnDestroy {
   private readonly _subscription = new Subscription();
 
+  public breedImagesList$: Observable<Array<string>>;
   public breedsList$: Observable<Array<string>>;
-  public dogsList$: Observable<Array<string>>;
+  public subBreedsList$: Observable<Array<string>>;
 
-  public myControl = new FormControl<string>('');
+  public formGroup!: FormGroup;
 
-  constructor(private readonly _breedService: BreedService) {
+  constructor(
+    private readonly _breedService: BreedService,
+    private formBuilder: FormBuilder
+  ) {
     this.breedsList$ = this._breedService.breedsList$.asObservable();
-    this.dogsList$ = this._breedService.dogsList$.asObservable();
+    this.subBreedsList$ = this._breedService.subBreedsList$.asObservable();
+    this.breedImagesList$ = this._breedService.breedImagesList$.asObservable();
   }
 
   public ngOnInit(): void {
-    this._breedService.getRandomBreeds();
+    this.retrieveDogs();
+    this.initForm();
   }
   public ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
 
+  public retrieveDogs() {
+    this._breedService.getRandomBreeds();
+    this._breedService.getBreeds();
+  }
+
+  public initForm() {
+    this.formGroup = this.formBuilder.group({
+      breed: [null, Validators.required],
+      subBreed: [null, Validators.required],
+    });
+
+    this.watchTheBreedSelectionChange();
+    this.watchTheSubBreedSelectionChange();
+  }
+
+  public watchTheBreedSelectionChange() {
+    this._subscription.add(
+      this.formGroup.get('breed')?.valueChanges.subscribe((name: string) => {
+        this._breedService.resetSelections();
+        this.formGroup.get('subBreed')?.reset();
+
+        this._breedService.getBreedImages(name);
+        this._breedService.getSubBreeds(name);
+      })
+    );
+  }
+
+  public watchTheSubBreedSelectionChange() {
+    this._subscription.add(
+      this.formGroup.get('subBreed')?.valueChanges.subscribe((sub: string) => {
+        const breedName = this.formGroup.get('breed')?.value;
+        sub && this._breedService.getSubBreedImages(breedName, sub);
+      })
+    );
+  }
+
+  public getBreed(url: string): string {
+    return getBreedByUrl(url);
+  }
+  public getSubBreed(url: string): string {
+    return getSubBreedByUrl(url);
+  }
+
   public trackByFunc(index: number) {
     return index;
+  }
+
+  public onSubmit(): void {
+    // console.log(this.formGroup.value);
+    this._breedService.getRandomBreeds();
   }
 }

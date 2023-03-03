@@ -1,0 +1,20 @@
+<mat-form-field class="w-full" appearance="fill">
+  <mat-label *ngIf="label">{{ label }}</mat-label>
+
+  <input
+    type="text"
+    matInput
+    [placeholder]="placeholder"
+    [matAutocomplete]="auto"
+    [disabled]="disabled"
+    [value]="value"
+  />
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onOptionSelected($event)"
+  >
+    <mat-option *ngFor="let option of options | async" [value]="option">
+      {{ option }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
