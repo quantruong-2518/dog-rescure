@@ -42,19 +42,26 @@
       "
     >
       <div
-        (click)="formGroup.get('breed')?.patchValue(getBreed(url))"
+        (click)="
+          formGroup.get('breed')?.patchValue(breedNamePipe.transform(url))
+        "
         class="relative"
       >
-        <img class="aspect-video object-cover w-full" [src]="url" [alt]="idx" />
+        <img
+          class="aspect-video object-cover w-full"
+          [src]="url"
+          [alt]="idx"
+          loading="lazy"
+        />
         <div class="absolute flex gap-2 bottom-2 right-2">
           <div class="rounded backdrop-blur font-bold bg-gray-100 px-4 py-1">
-            {{ getBreed(url) }}
+            {{ url | breedName }}
           </div>
           <div
-            *ngIf="getSubBreed(url)"
+            *ngIf="url | subBreedName"
             class="rounded backdrop-blur bg-gray-100 px-4 py-1"
           >
-            {{ getSubBreed(url) }}
+            {{ url | subBreedName }}
           </div>
         </div>
       </div>
@@ -64,7 +71,7 @@
   <!-- ??   -->
 
   <button
-    class="bg-blue-600 fixed text-white w-max px-4 py-1 rounded-sm bottom-2 left-1/2 translate-x-[-50%]"
+    class="bg-blue-500 fixed text-white w-max p-4 rounded bottom-2 left-1/2 translate-x-[-50%]"
     type="submit"
   >
     Get some more puppies

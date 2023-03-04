@@ -9,6 +9,13 @@ const routes: Routes = [
         (m) => m.BreedsListModule
       ),
   },
+  {
+    path: '**',
+    loadChildren: () =>
+      import('./modules/not-found/not-found.module').then(
+        (m) => m.NotFoundModule
+      ),
+  },
 ];
 
 @NgModule({

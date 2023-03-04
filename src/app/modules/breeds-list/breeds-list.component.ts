@@ -1,14 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { Observable, of, Subscription } from 'rxjs';
-import { Breed, DogAPIResponse } from '../shared/models/Breed.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subscription } from 'rxjs';
+
 import { BreedService } from './breed.service';
-import { getBreedByUrl, getSubBreedByUrl } from './breeds-list.helper';
+import { BreedNamePipe } from '../shared/pipes/breed-name.pipe';
 
 @Component({
   selector: 'app-breeds-list',
@@ -26,7 +21,8 @@ export class BreedsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly _breedService: BreedService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public breedNamePipe: BreedNamePipe
   ) {
     this.breedsList$ = this._breedService.breedsList$.asObservable();
     this.subBreedsList$ = this._breedService.subBreedsList$.asObservable();
@@ -75,13 +71,6 @@ export class BreedsListComponent implements OnInit, OnDestroy {
         sub && this._breedService.getSubBreedImages(breedName, sub);
       })
     );
-  }
-
-  public getBreed(url: string): string {
-    return getBreedByUrl(url);
-  }
-  public getSubBreed(url: string): string {
-    return getSubBreedByUrl(url);
   }
 
   public trackByFunc(index: number) {

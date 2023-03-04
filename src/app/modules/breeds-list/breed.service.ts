@@ -11,6 +11,7 @@ export class BreedService {
   constructor(private http: HttpClient) {}
 
   private configUrl = 'https://dog.ceo/api';
+  
   public DEFAULT_BREED_QUANTITY = 20;
   private mappedDogsLayout: Array<Breed> = [];
 
